@@ -1,133 +1,92 @@
 Agentic Dev Toolkit
 
-A minimal, sandbox-safe agentic developer assistant
-Intent → Plan → Execution → PR Template
+A minimal, sandbox-friendly prototype of an agentic developer assistant.
+It captures intent, generates or loads a structured plan, executes steps safely
+(dry-run by default), and produces diffs + PR templates.
 
-⭐ Overview
+This toolkit is designed to run even when common dependencies—openai, typer,
+pydantic, or gitpython—are not available.
 
-The Agentic Dev Toolkit is a lightweight prototype of a real-world agentic developer workflow:
+✨ Features
 
-Capture developer intent
+Intent Capture (from CLI flags or local plan file)
 
-Translate it into a structured JSON plan (LLM or local file)
+Optional LLM Planning (falls back to local plan if OpenAI is unavailable)
 
-Execute planned steps safely (dry-run by default)
+Deterministic Step Execution: shell, python, git, test, manual
 
-Produce PR-ready output and diffs
+Dry-Run Safety: no file changes unless explicitly allowed
 
-It is designed to work in restricted environments, gracefully degrading when dependencies like:
+Automatic PR Template Generation
 
-openai
+Graceful Fallbacks when dependencies are missing
 
-typer
+Basic Unit Tests included
 
-pydantic
-
-gitpython
-
-are missing.
-
-🔥 Highlights
-🌐 LLM Optional
-
-Uses OpenAI if installed — otherwise runs entirely offline.
-
-🛡️ Safe Execution
-
-Always dry-run unless --apply-changes is explicitly provided.
-
-🧩 Deterministic Agent Steps
-
-Handles the core step types:
-
-shell
-
-python
-
-git
-
-test
-
-manual
-
-📦 Zero-Dependency Mode
-
-If packages are missing, built-in shims activate automatically.
-
-📝 Auto PR Generator
-
-Every run produces a clean PR body summarizing:
-
-summary
-
-steps
-
-risks
-
-🚀 Quick Start
-Mock Plan (Safe for any environment)
+🚀 Usage
+Mock plan (safe, recommended in restricted environments)
 python agentic_dev_toolkit.py --mock-plan
 
-Using Developer Intent
+Run with an explicit intent
 python agentic_dev_toolkit.py --intent "Refactor token parser"
 
-Using a JSON Plan File
+Load a JSON plan file
 python agentic_dev_toolkit.py --plan-file ./plan.json
 
-Applying Real Changes (Danger!)
+Execute changes (dangerous)
 python agentic_dev_toolkit.py --intent "Fix cache invalidation" --apply-changes
 
-🧪 Testing
+📦 Installation (optional)
 
-Run internal unittest suite:
-
-RUN_UNIT_TESTS=1 python agentic_dev_toolkit.py
-
-📐 Architecture Diagram (Mermaid)
-flowchart TD
-
-A[User Intent or Plan File] --> B[Plan Generation]
-B -->|LLM available| C[OpenAI LLM]
-B -->|No LLM| D[Local Plan or Mock Plan]
-
-C --> E[Structured Plan]
-D --> E
-
-E --> F[Execution Engine (Dry-Run Default)]
-F --> G[Step Handlers]
-G --> H[Shell / Python / Git / Test / Manual]
-
-H --> I[Results + Summary]
-I --> J[PR Template Generator]
-J --> K[Output PR Body + Git Diff]
-
-🧭 Design Principles
-
-Fail safe, not loud → dry-run is default
-
-Deterministic steps → all actions visible before execution
-
-Fully portable → works on machines with zero dependencies
-
-Composable → each step type can be extended independently
-
-Transparent → clear logs + PR templates
-
-🛠 Optional Dependencies
-
-Install for full features:
+Install full dependencies:
 
 pip install openai pydantic typer GitPython
 
 
-Enable LLM planning:
+Without these, the program runs in fallback mode using internal shims.
+
+To enable LLM planning:
 
 export OPENAI_API_KEY="your_api_key_here"
 
-🧰 Project Structure
-agentic_dev_toolkit.py   # Full agent system in one file
-README.md                 # Documentation
-plan.json (optional)      # Custom plans
+🧠 How It Works
+1. Plan Generation
+
+From LLM (if available)
+
+From --mock-plan
+
+From --plan-file
+
+2. Execution
+
+Dry-run by default
+
+Prints all actions instead of performing them (safe mode)
+
+3. PR Output
+
+Generates:
+
+A clean PR description
+
+Git diff (if GitPython is available)
+
+🧪 Running Tests
+
+Run built-in tests:
+
+RUN_UNIT_TESTS=1 python agentic_dev_toolkit.py
+
+⚠️ Notes
+
+This is still a prototype.
+
+Always review diffs before pushing real changes.
+
+Interactive mode may not work in all environments.
+
+The bottom-level argparse CLI runs even if Typer is available.
 
 📄 License
 
